@@ -11,6 +11,8 @@
 
 //warning: when running on arch, use escape sequence
 
+// -ok
+
 struct bottom_left {
     float xn;
     float yn;
@@ -78,6 +80,11 @@ void generate_arrow(SDL_Renderer* r, double x1, double y1, double x2, double y2)
     float left = PI + (phi/2.0);
     float right = PI + (3.0*phi/2.0);
     
+    // as you already have it just writing
+    //
+
+
+
     printf("phi is %f \n", phi);
 
     SDL_SetRenderDrawColor(r, 0,255,0,255);
@@ -85,6 +92,8 @@ void generate_arrow(SDL_Renderer* r, double x1, double y1, double x2, double y2)
     SDL_SetRenderDrawColor(r, 255,0,0,255);
     SDL_RenderDrawLine(r,x2, y_t, (x2 + (c*cos(left))), (y_t - (c*sin(left))));
     SDL_RenderDrawLine(r,x2,y_t, x2 + (c*cos(right)), y_t - (c*sin(right)));
+
+
 }
 
 void clear_scheme(SDL_Renderer* render) {
@@ -101,12 +110,36 @@ void clear_scheme(SDL_Renderer* render) {
 // void move(SDL_Rect* rect, float v) {
 //     rect->x += v;
 // }
+
+
+
+
+
 void move(float* buffer, float* x, float* y, float v) {
     *x += v;
     *y += v;
     buffer[0] = *x;
     buffer[1] = *y;
+
+
 }
+
+
+bool is_collided(float* x, float* y, float* x2, float* y2, float height, float width) {
+    //x2+y2=r2
+    //x2, y2 are coords of another object of collision, idk how to make it look better
+    //radius works according to size of a robot
+    float power_2 = 2.0;
+    float max_coord = sqrt(pow(height/power_2, 2)+pow(width/power_2, 2));
+
+    if(abs(pow(x2-x, 2)+pow(y2-y, 2))<=pow(max_coord, 2)){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+
 
 int main(int argc, char* argv[]) {
     uint32_t flags = SDL_RENDERER_ACCELERATED;
@@ -136,23 +169,31 @@ int main(int argc, char* argv[]) {
     
     // generate_point(render, 5, 5, 4); // not even a full circle just an approximation
     //generate_arrow(render, 0.0,400.0,0.0,400.0); //x1,y1,x2,y2
-    // float velocity = 10.0;
+    float velocity = 10.0;
     // SDL_Rect nr = {.x=100,.y=100,.h=30,.w=30};
     // generate_arrow(render,0.0,0.0,770.0,10.0);
     // clear_scheme(render);
     float xi = 0.0;
-    // float yi = 0.0;
+    float yi = 0.0;
+
+    // --use other variables--
+    float xi2 = 0.0;
+    float yi2 = 0.0;
+    double radius1 = 101.0;
+    float xi3 = 100.0;
+    float yi3 = 100.0;
+
+    float width = 200.0;
+    float height = 400.0;
+
+
+    // --use other variables--
+
+
     float max_r = 400.0;
     //generate_arrow(render, xi, 0.0, max_r, 0.0);
 
-    // for(int i=0; i < 10; i++) {
-    //     float transform[2] = {0};
-    //     move(transform, &xi, &yi, velocity);
-    //     // clear_scheme(render);
-    //     generate_arrow(render, 0.0, 0.0, max_r + transform[0], transform[1]);
-    //     printf("xi is %f and yi is %f", xi, yi);
-    //     // SDL_Delay(100);
-    // }
+
     bool exit = false;
     while(!exit) {
         SDL_Event event;
@@ -169,7 +210,27 @@ int main(int argc, char* argv[]) {
         }
 	create_border(render, 0, 0, 10, 800);
 	//SDL_Rect init = create_border(render,0,0,10,800);
-	//generate_arrow(render, 0, 0, 200, 200);
+	generate_arrow(render, 0, 0, 250, 200);
+    float transform[2] = {0};
+    move(transform, &xi, &yi, velocity);
+
+
+// - Atai was here -
+//    if(is_collided(&xi2, &yi2, &xi3, &yi3, height, width)){
+        // I have no idea how to print bools on C
+//        printf("collided");
+//    }else{
+//        printf("not collided");
+//    }
+
+
+
+
+
+
+    generate_arrow(render, 0.0, 0.0, max_r + transform[0], transform[1]);
+    printf("xi is %f and yi is %f", xi, yi);
+    SDL_Delay(100);
 	//SDL_SetRenderDrawColor(render, 255, 0, 0, 255);
     	//SDL_RenderFillRect(render, &init);
 	SDL_RenderPresent(render);
